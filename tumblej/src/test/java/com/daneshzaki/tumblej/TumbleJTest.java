@@ -3,16 +3,10 @@
  */
 package com.daneshzaki.tumblej;
 
-import static org.junit.Assert.*;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Properties;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.Assert;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,12 +37,12 @@ public class TumbleJTest {
 	 */
 	@Test
 	public void testGetPosts() throws JSONException {
-		Assert.assertNotNull(tj.getPosts());
+		assertNotNull(tj.getPosts());
 	}
 	
 	@Test
 	public void testPostQuote() throws Exception {
-		Assert.assertNotNull(tj.postQuote("Keren<br>Bo'!", "Gadis Cantik", "malam,bikin,happy", null));
+		assertNotNull(tj.postQuote("Keren<br>Bo'!", "Gadis Cantik", "malam,bikin,happy", null));
 	}
 
 }
