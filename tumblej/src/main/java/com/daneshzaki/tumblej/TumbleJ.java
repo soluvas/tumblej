@@ -1,10 +1,18 @@
 package com.daneshzaki.tumblej;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * <b>TumbleJ</b> is a Java API for Tumblr. It aims to perform posting and retrieving content. 
