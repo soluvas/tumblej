@@ -1,0 +1,5 @@
+This code is released as open-source under the LGPL v3.0 license.
+
+See lgpl-3.0.txt or http://www.gnu.org/licenses/lgpl.html for license details.
+
+This code comes with no warranty or support. 
