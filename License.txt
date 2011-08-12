@@ -1,0 +1,1 @@
+This code is released as open-source under the LGPL license. See http://www.gnu.org/licenses/lgpl.html  for license details. This code comes with no warranty or support. 
