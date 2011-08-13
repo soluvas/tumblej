@@ -6,6 +6,8 @@ package com.daneshzaki.tumblej;
 import java.util.Properties;
 
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +44,22 @@ public class TumbleJTest {
 	
 	@Test
 	public void testPostQuote() throws Exception {
-		assertNotNull(tj.postQuote("Keren<br>Bo'!", "Gadis Cantik", "malam,bikin,happy", null));
+		// response: {"meta":{"status":201,"msg":"Created"},"response":{"id":8868275314}}
+		JSONObject response = tj.postQuote("Keren<br>Bo'!", "Gadis Cantik", "malam,bikin,happy", null);
+		assertNotNull(response);
+		assertEquals(201, response.getJSONObject("meta").get("status"));
+		assertNotNull(response.getJSONObject("response").get("id"));
+	}
+
+	@Test
+	public void testPostText() throws Exception {
+		// response: {"meta":{"status":201,"msg":"Created"},"response":{"id":8868275314}}
+		JSONObject response = tj.postText("Sebuah Kisah Cinta",
+				"Di suatu malam abdi bertemu gadis geulis...",
+				"malam,bikin,happy", null);
+		assertNotNull(response);
+		assertEquals(201, response.getJSONObject("meta").get("status"));
+		assertNotNull(response.getJSONObject("response").get("id"));
 	}
 
 }

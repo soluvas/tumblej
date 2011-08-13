@@ -8,6 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.DocumentBuilder;
@@ -166,17 +168,13 @@ public class TumbleJ {
 	 *            date of the post
 	 */
 
-	public void postText(String title, String body, String tags, String date)
+	public JSONObject postText(String title, String body, String tags, String date)
 			throws Exception {
-		String[] textPostParams = new String[4];
-
-		textPostParams[0] = "&title=";
-		textPostParams[1] = title;
-		textPostParams[2] = "&body=";
-		textPostParams[3] = body;
-
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("title", title);
+		params.put("body", body);
 		// call post method
-		post(POST_REGULAR_TEXT, tags, date, textPostParams);
+		return post(POST_TEXT, tags, date, params);
 	}
 
 	/**
@@ -194,20 +192,11 @@ public class TumbleJ {
 
 	public JSONObject postQuote(String quote, String source, String tags, String date)
 			throws Exception {
-		MultivaluedMapImpl data = new MultivaluedMapImpl();
-		data.add("type", "quote");
-		data.add("quote", quote);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("quote", quote);
 		if (source != null && source != "")
-			data.add("source", source);
-		if (tags != null && tags != "")
-			data.add("tags", tags);
-		if (date != null && date != "")
-			data.add("date", date);
-		WebResource resource = client.resource("http://api.tumblr.com/v2/blog/" + baseHostname + "/post");
-		prepareOauth(resource);
-		JSONObject response = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-				.post(JSONObject.class, data);
-		return response;
+			params.put("source", source);
+		return post(POST_QUOTE, tags, date, params);
 	}
 
 	/**
@@ -218,98 +207,112 @@ public class TumbleJ {
 	 *            name of URL
 	 * @param url
 	 *            link to post
+	 * @param description A user-supplied description, HTML allowed
 	 * @param tags
 	 *            tags for the post
 	 * @param date
 	 *            date of the post
 	 */
 
-	public void postLink(String name, String url, String tags, String date)
-			throws Exception {
-		String[] linkPostParams = new String[4];
-
-		linkPostParams[0] = "&name=";
-		linkPostParams[1] = name;
-		linkPostParams[2] = "&url=";
-		linkPostParams[3] = url;
-
-		// call post method
-		post(POST_LINK, tags, date, linkPostParams);
-	}
-
-	/**
-	 * This method writes conversation posts to the Tumblr tumblog.
-	 * 
-	 * @param title
-	 *            title of conversation
-	 * @param conversation
-	 *            conversation to post
-	 * @param tags
-	 *            tags for the post
-	 * @param date
-	 *            date of the post
-	 */
-
-	public void postConversation(String title, String conversation,
+	public JSONObject postLink(String name, String url, String description,
 			String tags, String date) throws Exception {
-		String[] conversationPostParams = new String[4];
-
-		conversationPostParams[0] = "&title=";
-		conversationPostParams[1] = title;
-		conversationPostParams[2] = "&conversation=";
-		conversationPostParams[3] = conversation;
-
-		// call post method
-		post(POST_CONVERSATION, tags, date, conversationPostParams);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("title", name);
+		params.put("url", url);
+		params.put("description", description);
+		return post(POST_LINK, tags, date, params);
 	}
 
 	/**
-	 * This method writes audio posts to the Tumblr tumblog. Since file uploads
-	 * are not yet supported, it embeds audio URLs as video posts.
+	 * This method writes chat posts to the Tumblr tumblog.
 	 * 
-	 * @param audioFileURL
-	 *            Web-site URL of the audio file
-	 * @param caption
-	 *            caption for the audio file
+	 * @param title The title of the chat.
+	 * @param conversation The text of the conversation/chat, with dialogue labels (no HTML)
 	 * @param tags
 	 *            tags for the post
 	 * @param date
 	 *            date of the post
 	 */
-
-	public void postAudio(String audioFileURL, String caption, String tags,
-			String date) throws Exception {
-		// workaround: calling postVideo method as file uploads are not yet
-		// implemented
-		postVideo(audioFileURL, caption, tags, date);
+	public JSONObject postChat(String title, String conversation,
+			String tags, String date) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("title", title);
+		params.put("conversation", conversation);
+		return post(POST_CHAT, tags, date, params);
 	}
 
 	/**
-	 * This method writes video posts to the Tumblr tumblog. File uploads are
-	 * not yet supported.
+	 * This method writes audio posts to the Tumblr tumblog.
+	 * To upload audio file, use {@link postAudioData()}.
 	 * 
-	 * @param videoFileURL
-	 *            Web-site URL of the video file or HTML code for embedding
-	 *            video
-	 * @param caption
-	 *            caption for the video file
-	 * @param tags
-	 *            tags for the post
-	 * @param date
-	 *            date of the post
+	 * @param externalUrl Web-site URL of the audio file
+	 * @param caption caption for the audio file
+	 * @param tags tags for the post
+	 * @param date date of the post
+	 * @return API Response.
 	 */
-
-	public void postVideo(String videoFileURL, String caption, String tags,
+	public JSONObject postAudio(String externalUrl, String caption, String tags,
 			String date) throws Exception {
-		String[] videoPostParams = new String[4];
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("external_url", externalUrl);
+		if (caption != null && caption != "")
+			params.put("source", caption);
+		return post(POST_AUDIO, tags, date, params);
+	}
 
-		videoPostParams[0] = "&embed=";
-		videoPostParams[1] = videoFileURL;
-		videoPostParams[2] = "&caption=";
-		videoPostParams[3] = caption;
+	/**
+	 * This method writes audio posts to the Tumblr tumblog.
+	 * To upload audio file, use {@link postAudioData()}.
+	 * 
+	 * @param data An audio file (max 5 MB).
+	 * @param caption caption for the audio file
+	 * @param tags tags for the post
+	 * @param date date of the post
+	 * @return API Response.
+	 */
+	public JSONObject postAudioData(Byte[] data, String caption, String tags,
+			String date) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("data", data);
+		if (caption != null && caption != "")
+			params.put("source", caption);
+		return post(POST_AUDIO, tags, date, params);
+	}
 
-		// call post method
-		post(POST_VIDEO, tags, date, videoPostParams);
+	/**
+	 * This method writes video posts to the Tumblr tumblog using embed.
+	 * To use file uploads, see {@link postVideoData()}.
+	 * 
+	 * @param embed Web-site URL of the video file or HTML code for embedding video
+	 * @param caption caption for the video file
+	 * @param tags tags for the post
+	 * @param date date of the post
+	 */
+	public JSONObject postVideo(String embed, String caption, String tags,
+			String date) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("embed", embed);
+		if (caption != null && caption != "")
+			params.put("source", caption);
+		return post(POST_VIDEO, tags, date, params);
+	}
+
+	/**
+	 * This method writes video posts to the Tumblr tumblog using embed.
+	 * To use file uploads, see {@link postVideoData()}.
+	 * 
+	 * @param embed Web-site URL of the video file or HTML code for embedding video
+	 * @param caption caption for the video file
+	 * @param tags tags for the post
+	 * @param date date of the post
+	 */
+	public JSONObject postData(Byte[] data, String caption, String tags,
+			String date) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("data", data);
+		if (caption != null && caption != "")
+			params.put("source", caption);
+		return post(POST_VIDEO, tags, date, params);
 	}
 
 	/**
@@ -318,7 +321,7 @@ public class TumbleJ {
 	 * methods.
 	 * 
 	 * @param type
-	 *            presently set to "regular" for text posts
+	 *            The type of post to create. Specify one of the following:  text, photo, quote, link, chat, audio, video
 	 * @param tags
 	 *            tags for the post
 	 * @param date
@@ -327,126 +330,23 @@ public class TumbleJ {
 	 *            array containing parameters for different type of posts
 	 */
 
-	public void post(String type, String tags, String date,
-			String[] specificParams) throws Exception {
-
-		openConnection(TUMBLR_WRITE_URL);
-
-		// do a HTTP POST with the parameters
-		printout = new DataOutputStream(connection.getOutputStream());
-
-		// add content with the parameters
-		StringBuffer content = new StringBuffer();
-
-		// set initial parameters for post
-		content = setInitialParameters(content, type);
-
-		// set post specific parameters
-		content = setPostSpecificParameters(content, specificParams);
-
-		// set optional parameters for post
-		content = setOptionalParameters(content, tags, date);
-
-		System.out.println("HTTP Request:\n\n" + content.toString());
-
-		// write to the URL stream
-		printout.writeBytes(content.toString());
-		printout.flush();
-		printout.close();
-
-		// get the status
-		System.out.println("HTTP Response:\n\n" + getStatus());
-
-	}
-
-	// This method sets the initial parameters for posting
-
-	private StringBuffer setInitialParameters(StringBuffer content, String type)
-			throws Exception {
-
-		content.append("email=");
-		content.append(URLEncoder.encode(username, ENCODING));
-
-		content.append("&password=");
-		content.append(URLEncoder.encode(password, ENCODING));
-
-		content.append("&type=");
-		content.append(URLEncoder.encode(type, ENCODING));
-
-		return content;
-
-	}
-
-	// This method sets the parameters specific to the post
-
-	private StringBuffer setPostSpecificParameters(StringBuffer content,
-			String[] specificParams) throws Exception {
-		content.append(specificParams[0]);
-		content.append(URLEncoder.encode(specificParams[1], ENCODING));
-
-		content.append(specificParams[2]);
-		content.append(URLEncoder.encode(specificParams[3], ENCODING));
-
-		return content;
-
-	}
-
-	// This method sets the optional parameters
-
-	private StringBuffer setOptionalParameters(StringBuffer content,
-			String tags, String date) throws Exception {
-		content.append("&tags=");
-		content.append(URLEncoder.encode(tags, ENCODING));
-
-		content.append("&date=");
-		content.append(URLEncoder.encode(date, ENCODING));
-
-		return content;
-
-	}
-
-	// This method opens the connection to the Tumblr URL
-
-	private void openConnection(String tumblrUrl) throws Exception {
-		URL url;
-
-		// URL of tumblr.com
-		url = new URL(tumblrUrl);
-
-		connection = url.openConnection();
-
-		// to get the status of the write operation
-		connection.setDoInput(true);
-
-		// to write the post to the URL
-		connection.setDoOutput(true);
-
-		// instruction not to use cache but the fresh connection
-		connection.setUseCaches(false);
-
-		// encode the contents of the form
-		connection.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
-
-	}
-
-	// This method gets the status of the write operation
-
-	private String getStatus() throws Exception {
-		BufferedReader input;
-
-		// get the response
-		input = new BufferedReader(new InputStreamReader(
-				connection.getInputStream()));
-
-		String status = null;
-
-		status = input.readLine();
-
-		input.close();
-
-		return status;
-
+	public JSONObject post(String type, String tags, String date,
+			Map<String, Object> specificParams) throws Exception {
+		MultivaluedMapImpl data = new MultivaluedMapImpl();
+		data.add("type", type);
+		if (tags != null && tags != "")
+			data.add("tags", tags);
+		if (date != null && date != "")
+			data.add("date", date);
+		for (Entry<String, Object> entry : specificParams.entrySet()) {
+			data.add(entry.getKey(), entry.getValue());
+		}
+		
+		WebResource resource = client.resource("http://api.tumblr.com/v2/blog/" + baseHostname + "/post");
+		prepareOauth(resource);
+		JSONObject response = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+				.post(JSONObject.class, data);
+		return response;
 	}
 
 	/**
@@ -538,11 +438,11 @@ public class TumbleJ {
 	 * Perform 3-legged OAuth authorization. 
 	 * @return URL needed to continue authorization.
 	 */
-	private URL authorize() {
-		OAuthParameters parameters = new OAuthParameters().consumerKey(consumerKey);
-		OAuthSecrets secrets = new OAuthSecrets().consumerSecret(consumerSecret);
-		return null;
-	}
+//	private URL authorize() {
+//		OAuthParameters parameters = new OAuthParameters().consumerKey(consumerKey);
+//		OAuthSecrets secrets = new OAuthSecrets().consumerSecret(consumerSecret);
+//		return null;
+//	}
 	
 	/**
 	 * Return all posts of the blog.
@@ -563,27 +463,12 @@ public class TumbleJ {
 		client.addFilter(new LoggingFilter());
 	}
 	
-	private void filterLogging(WebResource resource) {
-//		resource.addFilter(new LoggingFilter(java.util.logging.Logger.getLogger(getClass().getName())));
-//		resource.addFilter(new LoggingFilter());
-	}
-	
 	private void prepareOauth(WebResource resource) {
 		OAuthParameters parameters = new OAuthParameters().consumerKey(consumerKey).token(token);//.signatureMethod("PLAINTEXT");
 		OAuthSecrets secrets = new OAuthSecrets().consumerSecret(consumerSecret).tokenSecret(tokenSecret);
 		OAuthClientFilter oauthFilter = new OAuthClientFilter(client.getProviders(), parameters, secrets);
 		resource.addFilter(oauthFilter);
 	}
-
-	// connection to Tumblr
-	private URLConnection connection = null;
-
-	private DataOutputStream printout = null;
-
-	// credentials
-	private String username = "";
-
-	private String password = "";
 
 	// parameters for reading posts
 	private String baseHostname = "";
@@ -598,10 +483,10 @@ public class TumbleJ {
 	private static final String TUMBLR_WRITE_URL = "http://www.tumblr.com/api/write";
 
 	// literals
-	private static final String POST_REGULAR_TEXT = "regular";
+	private static final String POST_TEXT = "text";
 	private static final String POST_QUOTE = "quote";
 	private static final String POST_LINK = "link";
-	private static final String POST_CONVERSATION = "conversation";
+	private static final String POST_CHAT = "chat";
 	private static final String POST_VIDEO = "video";
 	private static final String POST_AUDIO = "audio";
 	private Client client;
