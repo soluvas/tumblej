@@ -1,5 +1,7 @@
 package com.daneshzaki.tumblej;
 
+import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -20,8 +23,11 @@ import org.w3c.dom.NodeList;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.LoggingFilter;
+import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
 import com.sun.jersey.oauth.client.OAuthClientFilter;
+import com.sun.jersey.oauth.client.OAuthClientFilter.AuthHandler;
 import com.sun.jersey.oauth.signature.OAuthParameters;
 import com.sun.jersey.oauth.signature.OAuthSecrets;
 
@@ -51,17 +57,32 @@ public class TumbleJ {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
+	private Client client;
 	private String consumerKey;
 	private String consumerSecret;
+	private String baseHostname = "";
 	private String token;
 	private String tokenSecret;
 	
+	// parameters for reading posts
+	private String numberOfPosts = "";
+	private String startPostNo = "";
+	private String postType = "";
+
+	// literals
+	private static final String POST_TEXT = "text";
+	private static final String POST_PHOTO = "photo";
+	private static final String POST_QUOTE = "quote";
+	private static final String POST_LINK = "link";
+	private static final String POST_CHAT = "chat";
+	private static final String POST_VIDEO = "video";
+	private static final String POST_AUDIO = "audio";
+
 	/**
 	 * Default constructor.
 	 */
 	public TumbleJ() { }
 	
-
 	/**
 	 * @param consumerKey
 	 * @param consumerSecret
@@ -150,23 +171,60 @@ public class TumbleJ {
 	/**
 	 * This method writes text posts to the Tumblr tumblog.
 	 * 
-	 * @param postTitle
-	 *            title of the post
-	 * @param body
-	 *            body of the post
-	 * @param tags
-	 *            tags for the post
-	 * @param date
-	 *            date of the post
+	 * @param postTitle title of the post
+	 * @param body body of the post
+	 * @param tags tags for the post
+	 * @param date date of the post
 	 */
-
 	public JSONObject postText(String title, String body, String tags, String date)
 			throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("title", title);
+		if (title != null && title != "")
+			params.put("title", title);
 		params.put("body", body);
-		// call post method
 		return post(POST_TEXT, tags, date, params);
+	}
+
+	/**
+	 * This method writes Photo posts to the Tumblr tumblog.
+	 * To upload a photo, use {@link postPhotoData()}.
+	 * 
+	 * @param caption The user-supplied caption, HTML allowed
+	 * @param source The photo source URL
+	 * @param link The "click-through URL" for the photo
+	 * @param tags tags for the post
+	 * @param date date of the post
+	 */
+	public JSONObject postPhoto(String caption, String source, String link,
+			String tags, String date)
+			throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		if (caption != null && caption != "")
+			params.put("caption", caption);
+		params.put("source", source);
+		if (link != null && caption != "")
+			params.put("link", link);
+		return post(POST_PHOTO, tags, date, params);
+	}
+
+	/**
+	 * This method writes Photo posts to the Tumblr tumblog.
+	 * 
+	 * @param caption The user-supplied caption, HTML allowed
+	 * @param data The photo file
+	 * @param link The "click-through URL" for the photo
+	 * @param tags tags for the post
+	 * @param date date of the post
+	 */
+	public JSONObject postPhotoData(String caption, byte[] data, String link, String tags, String date)
+			throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		if (caption != null && caption != "")
+			params.put("caption", caption);
+		params.put("data", new String(data));
+		if (link != null && caption != "")
+			params.put("link", link);
+		return post(POST_PHOTO, tags, date, params);
 	}
 
 	/**
@@ -248,7 +306,7 @@ public class TumbleJ {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("external_url", externalUrl);
 		if (caption != null && caption != "")
-			params.put("source", caption);
+			params.put("caption", caption);
 		return post(POST_AUDIO, tags, date, params);
 	}
 
@@ -265,7 +323,8 @@ public class TumbleJ {
 	public JSONObject postAudioData(byte[] data, String caption, String tags,
 			String date) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("data", data);
+		String dataStr = IOUtils.toString(data);
+		params.put("data", dataStr);
 		if (caption != null && caption != "")
 			params.put("source", caption);
 		return post(POST_AUDIO, tags, date, params);
@@ -298,10 +357,10 @@ public class TumbleJ {
 	 * @param tags tags for the post
 	 * @param date date of the post
 	 */
-	public JSONObject postData(byte[] data, String caption, String tags,
+	public JSONObject postVideoData(byte[] data, String caption, String tags,
 			String date) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("data", data);
+		params.put("data", new String(data));
 		if (caption != null && caption != "")
 			params.put("source", caption);
 		return post(POST_VIDEO, tags, date, params);
@@ -318,19 +377,21 @@ public class TumbleJ {
 	 *            tags for the post
 	 * @param date
 	 *            date of the post
-	 * @param specificParams
-	 *            array containing parameters for different type of posts
+	 * @param params Parameters for different type of posts
 	 */
 
 	public JSONObject post(String type, String tags, String date,
-			Map<String, Object> specificParams) throws Exception {
-		MultivaluedMapImpl data = new MultivaluedMapImpl();
+			Map<String, Object> params) throws Exception {
+//		MultivaluedMapImpl data = new MultivaluedMapImpl();
+		Form data = new Form();
+//		StringKeyObjectValueIgnoreCaseMultivaluedMap data = new StringKeyObjectValueIgnoreCaseMultivaluedMap();
+//		Map<String, Object> data = new HashMap<String, Object>(params);
 		data.add("type", type);
 		if (tags != null && tags != "")
 			data.add("tags", tags);
 		if (date != null && date != "")
 			data.add("date", date);
-		for (Entry<String, Object> entry : specificParams.entrySet()) {
+		for (Entry<String, Object> entry : params.entrySet()) {
 			data.add(entry.getKey(), entry.getValue());
 		}
 		
@@ -456,32 +517,31 @@ public class TumbleJ {
 	}
 	
 	private void prepareOauth(WebResource resource) {
-		OAuthParameters parameters = new OAuthParameters().consumerKey(consumerKey).token(token);//.signatureMethod("PLAINTEXT");
-		OAuthSecrets secrets = new OAuthSecrets().consumerSecret(consumerSecret).tokenSecret(tokenSecret);
+		final OAuthParameters parameters = new OAuthParameters().consumerKey(consumerKey);
+		if (token != null && token != "")
+			parameters.setToken(token);
+		final OAuthSecrets secrets = new OAuthSecrets().consumerSecret(consumerSecret);
+		if (tokenSecret != null && tokenSecret != "")
+			secrets.setTokenSecret(tokenSecret);
 		OAuthClientFilter oauthFilter = new OAuthClientFilter(client.getProviders(), parameters, secrets);
+//		OAuthClientFilter oauthFilter = new OAuthClientFilter(client.getProviders(), parameters, secrets,
+//				"http://www.tumblr.com/oauth/request_token",
+//				"http://www.tumblr.com/oauth/access_token",
+//				"http://www.tumblr.com/oauth/authorize", new AuthHandler() {
+//					@Override
+//					public void authorized(String token, String tokenSecret) {
+////						parameters.token(token);
+////						secrets.tokenSecret(tokenSecret);
+//					}
+//					
+//					@Override
+//					public String authorize(URI authorizationUri) {
+//						throw new IllegalStateException(
+//								"OAuth authorization required. Please visit " + authorizationUri);
+//					}
+//				});
 		resource.addFilter(oauthFilter);
 	}
-
-	// parameters for reading posts
-	private String baseHostname = "";
-	private String numberOfPosts = "";
-	private String startPostNo = "";
-	private String postType = "";
-
-	// format
-	private static final String ENCODING = "UTF-8";
-
-	// URL
-	private static final String TUMBLR_WRITE_URL = "http://www.tumblr.com/api/write";
-
-	// literals
-	private static final String POST_TEXT = "text";
-	private static final String POST_QUOTE = "quote";
-	private static final String POST_LINK = "link";
-	private static final String POST_CHAT = "chat";
-	private static final String POST_VIDEO = "video";
-	private static final String POST_AUDIO = "audio";
-	private Client client;
 
 	/**
 	 * @return the consumerKey

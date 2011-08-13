@@ -5,6 +5,8 @@ package com.daneshzaki.tumblej;
 
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -48,6 +50,41 @@ public class TumbleJTest {
 		JSONObject response = tj.postText("Sebuah Kisah Cinta",
 				"Di suatu malam abdi bertemu gadis geulis...",
 				"malam,bikin,happy", null);
+		assertNotNull(response);
+		assertEquals(201, response.getJSONObject("meta").get("status"));
+		assertNotNull(response.getJSONObject("response").get("id"));
+	}
+
+	/**
+	 * From http://wiwiadawiyah.tumblr.com/post/8731316169
+	 * http://30.media.tumblr.com/tumblr_lk5tyx3Zqo1qb67gho1_500.jpg
+	 * @throws Exception
+	 */
+	@Test
+	public void testPostPhoto() throws Exception {
+		// response: {"meta":{"status":201,"msg":"Created"},"response":{"id":8868275314}}
+		JSONObject response = tj.postPhoto("Smile",
+				"http://30.media.tumblr.com/tumblr_lk5tyx3Zqo1qb67gho1_500.jpg",
+				"Senyum itu indah dan menyenangkan, apalagi dari mojang geulis :)",
+				"smile,senyum", null);
+		assertNotNull(response);
+		assertEquals(201, response.getJSONObject("meta").get("status"));
+		assertNotNull(response.getJSONObject("response").get("id"));
+	}
+
+	/**
+	 * For some strange reason, this immediately triggers
+	 * an 401 Not Authorized. :-(
+	 * However, old access token is still usable for doing non-upload posts.
+	 * @throws Exception
+	 */
+	@Test
+	public void testPostPhotoData() throws Exception {
+		// response: {"meta":{"status":201,"msg":"Created"},"response":{"id":8868275314}}
+		byte[] data = IOUtils.toByteArray(getClass().getResourceAsStream("/apache-maven_logo.gif"));
+		JSONObject response = tj.postPhotoData("Apache Maven",
+				data, "Build system that everybody loves and hates.",
+				"apache,maven,build,system,project", null);
 		assertNotNull(response);
 		assertEquals(201, response.getJSONObject("meta").get("status"));
 		assertNotNull(response.getJSONObject("response").get("id"));

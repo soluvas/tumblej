@@ -16,7 +16,6 @@ package com.daneshzaki.tumblej;
  *
  *
  */
-
 public class Post
 {
 
