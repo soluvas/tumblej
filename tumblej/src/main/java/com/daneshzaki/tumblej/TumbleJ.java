@@ -1,12 +1,5 @@
 package com.daneshzaki.tumblej;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.FilterOutputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,7 +19,6 @@ import org.w3c.dom.NodeList;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.oauth.client.OAuthClientFilter;
@@ -262,15 +254,15 @@ public class TumbleJ {
 
 	/**
 	 * This method writes audio posts to the Tumblr tumblog.
-	 * To upload audio file, use {@link postAudioData()}.
+	 * Only MP3 format is supported by Tumblr as of August 13, 2011.
 	 * 
-	 * @param data An audio file (max 5 MB).
+	 * @param data An MP3 audio file (max 5 MB).
 	 * @param caption caption for the audio file
 	 * @param tags tags for the post
 	 * @param date date of the post
 	 * @return API Response.
 	 */
-	public JSONObject postAudioData(Byte[] data, String caption, String tags,
+	public JSONObject postAudioData(byte[] data, String caption, String tags,
 			String date) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("data", data);
@@ -306,7 +298,7 @@ public class TumbleJ {
 	 * @param tags tags for the post
 	 * @param date date of the post
 	 */
-	public JSONObject postData(Byte[] data, String caption, String tags,
+	public JSONObject postData(byte[] data, String caption, String tags,
 			String date) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("data", data);
