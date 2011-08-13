@@ -1,7 +1,5 @@
 package com.daneshzaki.tumblej;
 
-import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,10 +22,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
 import com.sun.jersey.oauth.client.OAuthClientFilter;
-import com.sun.jersey.oauth.client.OAuthClientFilter.AuthHandler;
 import com.sun.jersey.oauth.signature.OAuthParameters;
 import com.sun.jersey.oauth.signature.OAuthSecrets;
 
@@ -505,7 +500,7 @@ public class TumbleJ {
 	public JSONArray getPosts() throws JSONException {
 		logger.info("Get Posts from " + baseHostname);
 		WebResource resource = client.resource("http://api.tumblr.com/v2/blog/" + baseHostname + "/posts");
-		JSONObject response = resource.get(JSONObject.class);
+		JSONObject response = resource.queryParam("api_key", consumerKey).get(JSONObject.class);
 		JSONArray posts = response.getJSONObject("response").getJSONArray("posts");
 		return posts;
 	}
