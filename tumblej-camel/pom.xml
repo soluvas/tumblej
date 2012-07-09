@@ -36,11 +36,11 @@
 	
 	<properties>
 		<tumblej.version>2.0.0-SNAPSHOT</tumblej.version>
-		<camel.version>2.6.0</camel.version>
-		<jersey.version>1.8</jersey.version>
-		<slf4j.version>1.6.1</slf4j.version>
-		<logback.version>0.9.29</logback.version>
-		<junit.version>4.8.2</junit.version>
+		<camel.version>2.10.0</camel.version>
+		<jersey.version>1.13</jersey.version>
+		<slf4j.version>1.6.4</slf4j.version>
+		<logback.version>1.0.3</logback.version>
+		<junit.version>4.10</junit.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -58,7 +58,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-jcl</artifactId>
+				<artifactId>jcl-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 				<scope>runtime</scope>
 			</dependency>
@@ -105,7 +105,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jcl</artifactId>
+			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -120,6 +120,7 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 		<plugin>
