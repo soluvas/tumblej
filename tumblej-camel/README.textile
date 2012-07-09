@@ -65,18 +65,31 @@ bc. install mvn:org.apache.camel/camel-core/2.10.0
 
 h3. Install Jersey dependencies
 
-bc. install mvn:commons-io/commons-io/2.4
-install mvn:org.codehaus.jettison/jettison/1.3.1
+bc. install mvn:org.codehaus.jettison/jettison/1.3.1
+install mvn:org.codehaus.jackson/jackson-core-asl/1.9.8
+install mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.8
+install mvn:org.codehaus.jackson/jackson-jaxrs/1.9.8
 
 jettison is required by jersey-json
+jackson 1.9 is required by jersey-json
 
-h3. Install jersey-client, jersey-json, oauth-signature, oauth-client
+h3. Install jersey-core, jersey-json, jersey-client, oauth-signature, oauth-client
 
-bc. install mvn:com.sun.jersey/jersey-core/1.13
-install mvn:com.sun.jersey/jersey-client/1.13
+bc. install mvn:com.sun.jersey.contribs.jersey-oauth/oauth-client/1.13
+install mvn:com.sun.jersey/jersey-core/1.13
 install mvn:com.sun.jersey/jersey-json/1.13
+install mvn:com.sun.jersey/jersey-client/1.13
 install mvn:com.sun.jersey.contribs.jersey-oauth/oauth-signature/1.13
-install mvn:com.sun.jersey.contribs.jersey-oauth/oauth-client/1.13
+
+Then start all these installed bundles.
+
+If you want to uninstall stuff:
+
+bc. uninstall jersey-core
+uninstall jersey-client
+uninstall jersey-json
+uninstall oauth-signature
+uninstall oauth-client
 
 h3. Install tumblej and tumblej-camel
 
@@ -93,6 +106,19 @@ install mvn:org.soluvas.social/tumblej-camel/1.0.0-SNAPSHOT
 For rapid development:
 
 bc. dev:watch mvn:*
+
+
+h2. Troubleshooting: com.sun.jersey.api.client.ClientHandlerException: com.sun.jersey.oauth.signature.UnsupportedSignatureMethodException: HMAC-SHA1
+
+I'm not sure why, but uninstalling the Jersey and Jersey-OAuth bundles, then reinstalling (in this order):
+
+* oauth-client
+* jersey-core
+* jersey-json
+* jersey-client
+* oauth-signature
+
+then starting these bundles, make it work. Probably something to do with ordering and/or start state of bundles.  
 
 h2. Deploying to ServiceMix (untested)
 
