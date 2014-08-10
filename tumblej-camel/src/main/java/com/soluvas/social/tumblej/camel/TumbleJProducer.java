@@ -30,8 +30,8 @@ import com.soluvas.social.tumblej.camel.TumbleJEndpoint.PostType;
  */
 public class TumbleJProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(TumbleJProducer.class);
-    private TumbleJEndpoint endpoint;
-    private TumbleJ tumbleJ;
+    private final TumbleJEndpoint endpoint;
+    private final TumbleJ tumbleJ;
 
     public TumbleJProducer(TumbleJEndpoint endpoint) {
         super(endpoint);
@@ -41,7 +41,8 @@ public class TumbleJProducer extends DefaultProducer {
         tumbleJ.init();
     }
 
-    public void process(Exchange exchange) throws Exception {
+    @Override
+	public void process(Exchange exchange) throws Exception {
     	Message inMsg = exchange.getIn();
     	PostType type = inMsg.getHeader("type", PostType.text, PostType.class);
     	String tags = inMsg.getHeader("tags", String.class);
@@ -62,10 +63,10 @@ public class TumbleJProducer extends DefaultProducer {
     		response = tumbleJ.postPhoto(caption, source, link, tags, date);
     		break;
     	case link:
-    		String name = inMsg.getHeader("name", String.class);
+    		String linkTitle = inMsg.getHeader("title", String.class);
     		String url = inMsg.getHeader("url", body, String.class);
     		String description = inMsg.getHeader("description", String.class);
-    		response = tumbleJ.postLink(name, url, description, tags, date);
+    		response = tumbleJ.postLink(linkTitle, url, description, tags, date);
     		break;
     	case quote:
     		String quote = inMsg.getHeader("quote", body, String.class);
