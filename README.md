@@ -27,7 +27,7 @@ Changes between 1.0 and 1.1:
 
 ## Credits
 
-Original developer: [Danesh Zaki](http://www.daneshzaki.com/) at 12 July 2008
+Original developer: [Danesh Zaki](http://www.daneshzaki.com/) on 12 July 2008
 
 Currently maintained by [Hendy Irawan](http://www.hendyirawan.com/)
 
