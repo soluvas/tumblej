@@ -7,7 +7,7 @@
 	<groupId>org.soluvas.social</groupId>
 	<artifactId>tumblej-camel</artifactId>
 	<packaging>bundle</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 
 	<name>TumbleJ Tumblr API Client Camel Component</name>
 	<url>https://github.com/soluvas/tumblej</url>
@@ -35,12 +35,12 @@
 	</licenses>
 	
 	<properties>
-		<tumblej.version>2.0.0-SNAPSHOT</tumblej.version>
-		<camel.version>2.10.0</camel.version>
-		<jersey.version>1.13</jersey.version>
-		<slf4j.version>1.6.4</slf4j.version>
-		<logback.version>1.0.3</logback.version>
-		<junit.version>4.10</junit.version>
+		<tumblej.version>3.0.0-SNAPSHOT</tumblej.version>
+		<camel.version>2.13.2</camel.version>
+		<jersey.version>1.18.1</jersey.version>
+		<slf4j.version>1.7.7</slf4j.version>
+		<logback.version>1.1.2</logback.version>
+		<junit.version>4.11</junit.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -116,10 +116,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>

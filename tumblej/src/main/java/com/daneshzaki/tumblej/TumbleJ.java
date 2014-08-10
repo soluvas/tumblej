@@ -50,7 +50,7 @@ import com.sun.jersey.oauth.signature.OAuthSecrets;
 
 public class TumbleJ {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private Client client;
 	private String consumerKey;
@@ -339,7 +339,7 @@ public class TumbleJ {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("embed", embed);
 		if (caption != null && caption != "")
-			params.put("source", caption);
+			params.put("caption", caption);
 		return post(POST_VIDEO, tags, date, params);
 	}
 

@@ -1,5 +1,7 @@
-Testing with Scala
-------------------
+# TumbleJ
+
+## Testing with Scala
+
 	mvn -Pscala exec:exec
 
     import com.daneshzaki.tumblej._
@@ -7,8 +9,8 @@ Testing with Scala
     var tj = new TumbleJ(consumerKey, consumerSecret, baseHostname, token, tokenSecret)
     tj.postQuote("Keren<br>Bo'!", "Gadis Cantik", "malam,bikin,happy", null)
 
-Deploying to ServiceMix
------------------------
+## Deploying to ServiceMix
+
 Get the files:
 
     mvn dependency:copy-dependencies
@@ -28,29 +30,29 @@ Needed for ServiceMix:
 * slf4j-api-1.6.1.jar
 * slf4j-jcl-1.6.1.jar
 
-Troubleshooting
----------------
+## Troubleshooting
+
 If you get this when deploying to ServiceMix:
 
-Error executing command: Unable to resolve module com.sun.jersey.jersey-json [222.0] because it is exposed to package 'javax.ws.rs' from com.sun.jersey.jersey-core [221.0] and org.apache.servicemix.specs.jsr311-api-1.1 [117.0] via two dependency chains.                                                     
-
-Chain 1:
-  com.sun.jersey.jersey-json [222.0]
-    import: (package=javax.ws.rs)
-     |
-    export: package=javax.ws.rs
-  com.sun.jersey.jersey-core [221.0]
-
-Chain 2:
-  com.sun.jersey.jersey-json [222.0]
-    import: (&(package=org.codehaus.jackson.jaxrs)(version>=1.7.0))
-     |
-    export: package=org.codehaus.jackson.jaxrs; uses:=javax.ws.rs
-  jackson-jaxrs [217.0]
-    import: (package=javax.ws.rs)
-     |
-    export: package=javax.ws.rs
-  org.apache.servicemix.specs.jsr311-api-1.1 [117.0]
+	Error executing command: Unable to resolve module com.sun.jersey.jersey-json [222.0] because it is exposed to package 'javax.ws.rs' from com.sun.jersey.jersey-core [221.0] and org.apache.servicemix.specs.jsr311-api-1.1 [117.0] via two dependency chains.                                                     
+	
+	Chain 1:
+	  com.sun.jersey.jersey-json [222.0]
+	    import: (package=javax.ws.rs)
+	     |
+	    export: package=javax.ws.rs
+	  com.sun.jersey.jersey-core [221.0]
+	
+	Chain 2:
+	  com.sun.jersey.jersey-json [222.0]
+	    import: (&(package=org.codehaus.jackson.jaxrs)(version>=1.7.0))
+	     |
+	    export: package=org.codehaus.jackson.jaxrs; uses:=javax.ws.rs
+	  jackson-jaxrs [217.0]
+	    import: (package=javax.ws.rs)
+	     |
+	    export: package=javax.ws.rs
+	  org.apache.servicemix.specs.jsr311-api-1.1 [117.0]
 
 It means there is conflict between "org.apache.servicemix.specs.jsr311-api-1.1"
 and "jersey-core" due to startup order. The culprit is jackson-jaxrs.
