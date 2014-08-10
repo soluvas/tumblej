@@ -22,12 +22,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * Represents the component that manages {@link TumbleJEndpoint}.
+ * Represents the component that manages {@link TumblrEndpoint}.
  */
-public class TumbleJComponent extends DefaultComponent {
+public class TumblrComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        TumbleJEndpoint endpoint = new TumbleJEndpoint(uri, this);
+        TumblrEndpoint endpoint = new TumblrEndpoint(uri, this);
         URI uriObj = new URI(uri);
         endpoint.setBaseHostname(uriObj.getHost());
         setProperties(endpoint, parameters);

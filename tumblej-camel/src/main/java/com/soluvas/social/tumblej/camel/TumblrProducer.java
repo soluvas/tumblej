@@ -23,17 +23,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.daneshzaki.tumblej.TumbleJ;
-import com.soluvas.social.tumblej.camel.TumbleJEndpoint.PostType;
+import com.soluvas.social.tumblej.camel.TumblrEndpoint.PostType;
 
 /**
  * The TumbleJ producer.
  */
-public class TumbleJProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TumbleJProducer.class);
-    private final TumbleJEndpoint endpoint;
+public class TumblrProducer extends DefaultProducer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(TumblrProducer.class);
+    private final TumblrEndpoint endpoint;
     private final TumbleJ tumbleJ;
 
-    public TumbleJProducer(TumbleJEndpoint endpoint) {
+    public TumblrProducer(TumblrEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         tumbleJ = new TumbleJ(endpoint.getConsumerKey(), endpoint.getConsumerSecret(), 

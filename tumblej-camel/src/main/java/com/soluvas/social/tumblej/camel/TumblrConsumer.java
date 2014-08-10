@@ -25,10 +25,10 @@ import org.apache.camel.impl.ScheduledPollConsumer;
  * The TumbleJ consumer.
  * @TODO implement
  */
-public class TumbleJConsumer extends ScheduledPollConsumer {
-    private final TumbleJEndpoint endpoint;
+public class TumblrConsumer extends ScheduledPollConsumer {
+    private final TumblrEndpoint endpoint;
 
-    public TumbleJConsumer(TumbleJEndpoint endpoint, Processor processor) {
+    public TumblrConsumer(TumblrEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }

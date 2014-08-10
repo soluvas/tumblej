@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 /**
  * Represents a TumbleJ endpoint.
  */
-public class TumbleJEndpoint extends DefaultEndpoint {
+public class TumblrEndpoint extends DefaultEndpoint {
 
 	public static enum PostType { text, photo, quote, link, chat, audio, video };
 	
@@ -33,19 +33,19 @@ public class TumbleJEndpoint extends DefaultEndpoint {
 	private String token;
 	private String tokenSecret;
 	
-    public TumbleJEndpoint() {
+    public TumblrEndpoint() {
     }
 
-    public TumbleJEndpoint(String uri, TumbleJComponent component) {
+    public TumblrEndpoint(String uri, TumblrComponent component) {
         super(uri, component);
     }
 
-    public TumbleJEndpoint(String endpointUri) {
+    public TumblrEndpoint(String endpointUri) {
         super(endpointUri);
     }
 
     public Producer createProducer() throws Exception {
-        return new TumbleJProducer(this);
+        return new TumblrProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
