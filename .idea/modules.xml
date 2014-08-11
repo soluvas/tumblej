@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/tumblej/tumblej.iml" filepath="$PROJECT_DIR$/tumblej/tumblej.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tumblej-build.iml" filepath="$PROJECT_DIR$/tumblej-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tumblej-camel/tumblej-camel.iml" filepath="$PROJECT_DIR$/tumblej-camel/tumblej-camel.iml" />
+    </modules>
+  </component>
+</project>
+
