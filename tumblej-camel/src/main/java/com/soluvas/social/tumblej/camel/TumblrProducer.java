@@ -92,8 +92,13 @@ public class TumblrProducer extends DefaultProducer {
 			throw new IllegalArgumentException("Unknown post type " + type);
     	}
     	Message out = exchange.getOut();
+    	out.getHeaders().putAll( exchange.getIn().getHeaders() );
+    	out.setHeader("request.body", exchange.getIn().getBody());
     	out.setHeader("meta.status", response.getJSONObject("meta").get("status"));
     	out.setHeader("meta.msg", response.getJSONObject("meta").get("msg"));
+    	if (response.getJSONObject("response").has("id")) {
+    		out.setHeader("response.id", response.getJSONObject("response").getLong("id"));
+    	}
     	out.setBody(response.get("response"));
     }
 

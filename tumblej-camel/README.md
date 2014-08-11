@@ -14,6 +14,30 @@ Optional headers:
 1. `tags`
 2. `date`
 
+The Camel `out` message will then contain:
+
+1. `body`: the HTTP response's `response` field as `org.codehaus.jettison.json.JSONObject`
+2. `request.body`: Exchange's `in.body`
+3. original headers from `Exchange.in` are copied
+4. `meta.status` (int): Tumblr HTTP response's `meta.status`, e.g. `201`
+5. `meta.msg` (String): Tumblr HTTP response's `meta.msg`, e.g. `Created`
+6. `response.id` (long): Tumblr HTTP response's Post `response.id`, e.g. `94405975514`
+
+Sample HTTP response: (note that the **HTTP** response is a JSON object containing `meta` and `response` **fields**)
+
+	1 < 201
+	1 < Transfer-Encoding: chunked
+	1 < Date: Mon, 11 Aug 2014 04:42:55 GMT
+	1 < P3P: CP="ALL ADM DEV PSAi COM OUR OTRo STP IND ONL"
+	1 < X-UA-Compatible: IE=Edge,chrome=1
+	1 < Set-Cookie: tmgioct=53e849cf2189550310044840; expires=Thu, 08-Aug-2024 04:42:55 GMT; path=/; httponly
+	1 < Connection: close
+	1 < Content-Type: application/json; charset=utf-8
+	1 < Server: nginx
+	1 < 
+	{"meta":{"status":201,"msg":"Created"},"response":{"id":94405975514}}
+
+
 ### Posting Text
 
 Header: `type = text` (optional)
