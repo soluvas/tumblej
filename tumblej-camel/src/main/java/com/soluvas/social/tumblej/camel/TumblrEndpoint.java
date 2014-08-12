@@ -34,14 +34,11 @@ public class TumblrEndpoint extends DefaultEndpoint {
 	private String tokenSecret;
 	
     public TumblrEndpoint() {
+        super();
     }
 
     public TumblrEndpoint(String uri, TumblrComponent component) {
         super(uri, component);
-    }
-
-    public TumblrEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public Producer createProducer() throws Exception {

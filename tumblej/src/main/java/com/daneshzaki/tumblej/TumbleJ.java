@@ -1,5 +1,6 @@
 package com.daneshzaki.tumblej;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -318,7 +319,7 @@ public class TumbleJ {
 	public JSONObject postAudioData(byte[] data, String caption, String tags,
 			String date) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
-		String dataStr = IOUtils.toString(data);
+		String dataStr = IOUtils.toString(data, StandardCharsets.ISO_8859_1.name()); // TODO: huh?
 		params.put("data", dataStr);
 		if (caption != null && caption != "")
 			params.put("source", caption);
