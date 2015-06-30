@@ -12,24 +12,31 @@
       <entry name="!?*.flex" />
       <entry name="!?*.kt" />
       <entry name="!?*.clj" />
+      <entry name="!?*.aj" />
     </wildcardResourcePatterns>
     <annotationProcessing>
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
-      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+      <profile default="false" name="Annotation profile for tumblej-camel" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="tumblej-camel" />
+      </profile>
+      <profile default="false" name="Annotation profile for tumblej" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="tumblej" />
-        <module name="tumblej-camel" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="tumblej" target="1.7" />
+      <module name="tumblej-build" target="1.5" />
       <module name="tumblej-camel" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
-
